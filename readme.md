@@ -11,8 +11,62 @@ https://t.me/joinchat/DNzoqBZ3iHcGMtD4CzR5fw
 * Issues should be created in this repository!
 * Make homework in separate branch with following format: homework_DD.MM_theme_name (*homework_28.02_clean_code*)
 * Open pull request in you repository and provide link in issue.
+* Add screenshots whe you done some UI changes
 
 # Feel free to create issue if some links don't work or you need some help
+
+# 28.04.2019
+Patterns => http://citforum.ru/SE/project/pattern/
+
+SOLID => https://ru.wikipedia.org/wiki/SOLID
+
+KISS => https://ru.wikipedia.org/wiki/KISS_(%D0%BF%D1%80%D0%B8%D0%BD%D1%86%D0%B8%D0%BF)
+
+YAGNI => https://ru.wikipedia.org/wiki/YAGNI
+
+DRY => https://ru.wikipedia.org/wiki/Don%E2%80%99t_repeat_yourself
+
+# HW 24.04.2019
+Gradle: https://developer.android.com/studio/build
+examples provided in /gradle branch of this project 
+
+Homework:
+- In your or some demo project use at least 4 buildVariants (using flavors and build type). Use different logic for each.
+- Using modules in your projects is additional plus
+
+# HW 18.04.2019
+Kotlin: https://kotlinlang.ru/
+
+Book: Kotlin in Action (Ru or EN)
+
+Slides: https://docs.google.com/presentation/d/16ZdYrWNw9p0B5LHGAkcVW6wquiXM2pbR17c5aRWZ88o/edit?usp=drivesdk
+
+Kotlin cheats 😉: [Kotlin Cheat Sheet](assets/Kotlin_Cheat_Sheet.pdf).
+
+Homework:
+Make all exercises in `kotlinKoans` module and make sure that all test passes successfully.
+
+The flow as usial: you make changes in separate branch and then open pull request + issue
+
+# HW 14.03.2019
+
+Related documentation:
+- https://developer.android.com/training/animation/screen-slide
+- https://developer.android.com/guide/topics/ui/layout/recyclerview
+- https://developer.android.com/reference/android/support/v7/widget/DividerItemDecoration
+- https://developer.android.com/reference/android/support/v7/util/DiffUtil
+- https://developer.android.com/reference/android/support/v7/widget/DefaultItemAnimator
+- https://developer.android.com/reference/android/support/v7/widget/helper/ItemTouchHelper
+
+## Theory
+- Take a look at the related documentation and learn items you didn't understand during the lesson.
+- Find out how to use https://developer.android.com/reference/android/arch/paging/PagedListAdapter. Do not use it in HW practics!
+
+## Practics
+- Create compound view wih custom attributes for student UI item
+- Create Backend data <-> RecyclerView UI relations (you can fork lesson implementation and finish it, or use your own).
+Backend data could be mocked, but it should give possibility to pull, delete and edit entities.
+RecyclerView should support drag'n'drop, swipe-to-delete and pagination features
 
 # HW 11.03.2019
 
