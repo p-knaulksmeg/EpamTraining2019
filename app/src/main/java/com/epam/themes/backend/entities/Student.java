@@ -1,32 +1,82 @@
 package com.epam.themes.backend.entities;
 
-public class Student {
+import android.os.Parcel;
+import android.os.Parcelable;
 
-    private Long mId;
-    private String mName;
-    private int mHwCount;
+public class Student implements Parcelable {
 
-    public Long getId() {
-        return mId;
+    public static final Creator<Student> CREATOR = new Creator<Student>() {
+        @Override
+        public Student createFromParcel(Parcel in) {
+            return new Student(in);
+        }
+
+        @Override
+        public Student[] newArray(int size) {
+            return new Student[size];
+        }
+    };
+    private Long Id;
+    private String Name;
+    private int HomeworkCount;
+
+    public Student() {
     }
 
-    public void setId(Long mId) {
-        this.mId = mId;
+    protected Student(Parcel in) {
+        if (in.readByte() == 0) {
+            Id = null;
+        } else {
+            Id = in.readLong();
+        }
+        Name = in.readString();
+        HomeworkCount = in.readInt();
+    }
+
+    public Long getId() {
+        return Id;
+    }
+
+    public Student setId(Long id) {
+        this.Id = id;
+
+        return this;
     }
 
     public String getName() {
-        return mName;
+        return Name;
     }
 
-    public void setName(String name) {
-        this.mName = name;
+    public Student setName(String name) {
+        this.Name = name;
+
+        return this;
     }
 
     public int getHwCount() {
-        return mHwCount;
+        return HomeworkCount;
     }
 
-    public void setHwCount(int hwCount) {
-        mHwCount = hwCount;
+    public Student setHwCount(int hwCount) {
+        HomeworkCount = hwCount;
+
+        return this;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel destination, int flags) {
+        if (Id == null) {
+            destination.writeByte((byte) 0);
+        } else {
+            destination.writeByte((byte) 1);
+            destination.writeLong(Id);
+        }
+        destination.writeString(Name);
+        destination.writeInt(HomeworkCount);
     }
 }
