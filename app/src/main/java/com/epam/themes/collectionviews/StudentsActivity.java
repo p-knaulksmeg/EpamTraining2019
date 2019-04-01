@@ -24,20 +24,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static com.epam.themes.backend.StudentsWebService.MAX_HOMEWORK_COUNT;
 import static com.epam.themes.backend.StudentsWebService.NULL_ID;
-import static com.epam.themes.backend.StudentsWebService.nameStudents;
+import static com.epam.themes.backend.StudentsWebService.students;
+import static com.epam.themes.backend.StudentsWebService.MAX_COMPLETED_HOMEWORK_COUNT;
+
 
 public class StudentsActivity extends AppCompatActivity {
 
     public static final int PAGE_SIZE = 10;
-    public static final int MAX_VISIBLE_ITEMS = 100;
-    public static final String LINEAR_LAYOUT_MANAGER_STATE_KEY = "LinearLayoutManagerStateKey";
-    public static final String STUDENT_LIST_STATE_KEY = "studentListStateKey";
+    public static final int MAX_VISIBLE_ITEMS = 40;
     public static final String IS_SHOW_LAST_VIEW_AS_LOADING_STATE_KEY = "isShowLastViewAsLoadingStateKey";
-    public static final String IS_LOAD_COMPLETE_STATE_KEY = "isLoadCompleteStateKey";
+    public static final String IS_LOAD_COMPLETED_STATE_KEY = "isLoadCompleteStateKey";
+    public static final String LINEAR_LAYOUT_MANAGER_STATE_KEY = "linearLayoutManagerStateKey";
+    public static final String STUDENT_LIST_STATE_KEY = "studentListStateKey";
     private final IWebService<Student> studentsWebService = new StudentsWebService();
-    private boolean isLoadComplete = false;
+
+    private boolean isLoadCompleted = false;
     private boolean isLoading = false;
     private StudentsAdapter studentsAdapter;
     private LinearLayoutManager linearLayoutManager;
@@ -57,10 +59,20 @@ public class StudentsActivity extends AppCompatActivity {
             studentsAdapter.addItems(savedInstanceState.<Student>getParcelableArrayList(STUDENT_LIST_STATE_KEY));
             linearLayoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LINEAR_LAYOUT_MANAGER_STATE_KEY));
             studentsAdapter.setShowLastViewAsLoading(savedInstanceState.getBoolean(IS_SHOW_LAST_VIEW_AS_LOADING_STATE_KEY));
-            isLoadComplete = savedInstanceState.getBoolean(IS_LOAD_COMPLETE_STATE_KEY);
+            isLoadCompleted = savedInstanceState.getBoolean(IS_LOAD_COMPLETED_STATE_KEY);
         } else {
             loadMoreItems(0, PAGE_SIZE);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(LINEAR_LAYOUT_MANAGER_STATE_KEY, linearLayoutManager.onSaveInstanceState());
+        outState.putParcelableArrayList(STUDENT_LIST_STATE_KEY, (ArrayList<? extends Parcelable>) studentsAdapter.getItems());
+        outState.putBoolean(IS_SHOW_LAST_VIEW_AS_LOADING_STATE_KEY, studentsAdapter.getIsShowLastViewAsLoading());
+        outState.putBoolean(IS_LOAD_COMPLETED_STATE_KEY, isLoadCompleted);
     }
 
     private void setupAddButton() {
@@ -70,8 +82,8 @@ public class StudentsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final Student newStudent = new Student()
                         .setId(NULL_ID)
-                        .setName(nameStudents.get(random.nextInt(nameStudents.size())))
-                        .setHwCount(random.nextInt(MAX_HW_COUNT));
+                        .setName(students.get(random.nextInt(students.size())))
+                        .setHomeworkCount(random.nextInt(MAX_COMPLETED_HOMEWORK_COUNT));
                 int insertPosition = linearLayoutManager.findFirstVisibleItemPosition() + 1;
 
                 studentsWebService.addEntity(insertPosition, newStudent, new ICallback<Long>() {
@@ -85,26 +97,17 @@ public class StudentsActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putParcelable(LINEAR_LAYOUT_MANAGER_STATE_KEY, linearLayoutManager.onSaveInstanceState());
-        outState.putParcelableArrayList(STUDENT_LIST_STATE_KEY, (ArrayList<? extends Parcelable>) studentsAdapter.getItems());
-        outState.putBoolean(IS_SHOW_LAST_VIEW_AS_LOADING_STATE_KEY, studentsAdapter.getIsShowLastViewAsLoading());
-        outState.putBoolean(IS_LOAD_COMPLETE_STATE_KEY, isLoadComplete);
-    }
-
     private void setupRecyclerView() {
         final RecyclerView studentsRecyclerView = findViewById(android.R.id.list);
 
         linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-
         studentsRecyclerView.setLayoutManager(linearLayoutManager);
+
         studentsAdapter = new StudentsAdapter(this, new StudentAdapterCallback() {
+
             @Override
             public void onStudentChange(Student student) {
-                studentsWebService.setHomeworkCount(student.getId(), student.getHwCount());
+                studentsWebService.setHomeworkCount(student.getId(), student.getHomeworkCount());
             }
 
             @Override
@@ -136,7 +139,7 @@ public class StudentsActivity extends AppCompatActivity {
     private void checkNeedAndLoadMore() {
         int totalItemCount = linearLayoutManager.getItemCount() - 1;
 
-        if (totalItemCount >= MAX_VISIBLE_ITEMS || isLoadComplete) {
+        if (totalItemCount >= MAX_VISIBLE_ITEMS || isLoadCompleted) {
             studentsAdapter.setShowLastViewAsLoading(false);
             return;
         }
@@ -156,16 +159,17 @@ public class StudentsActivity extends AppCompatActivity {
         isLoading = true;
         studentsAdapter.setShowLastViewAsLoading(true);
         studentsWebService.getEntities(startPosition, endPosition, new ICallback<List<Student>>() {
+
             @Override
             public void onResult(List<Student> resultList) {
                 if (resultList != null) {
                     if (resultList.size() < PAGE_SIZE) {
-                        isLoadComplete = true;
+                        isLoadCompleted = true;
                     }
 
                     studentsAdapter.addItems(resultList);
                 } else {
-                    isLoadComplete = true;
+                    isLoadCompleted = true;
                 }
 
                 isLoading = false;

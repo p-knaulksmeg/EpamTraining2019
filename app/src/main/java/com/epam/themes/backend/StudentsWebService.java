@@ -13,10 +13,10 @@ import java.util.Random;
 
 public class StudentsWebService implements IWebService<Student> {
 
-    public static final int MAX_HOMEWORK_COUNT = 10;
-    public static final long NULL_ID = -1L;
+    public static final int MAX_COMPLETED_HOMEWORK_COUNT = 10;
+    public static final long NULL_ID = 0;
     
-    public static List<String> nameStudents = Arrays.asList(
+    public static List<String> students = Arrays.asList(
             "Aliaksei Shvants",
             "Maryia Senkevich",
             "Pavel Klimovich",
@@ -36,6 +36,7 @@ public class StudentsWebService implements IWebService<Student> {
             "Maksim Siamashka",
             "Vladyslav Vsemirnov"
     );
+
     private Long lastId;
     private List<Student> studentList = new ArrayList<>();
     private Random random = new Random();
@@ -46,12 +47,12 @@ public class StudentsWebService implements IWebService<Student> {
     }
 
     private void createStudentList() {
-        for (int i = 0; i < nameStudents.size(); i++) {
+        for (int i = 0; i < students.size(); i++) {
             lastId = (long) i;
             Student student = new Student();
             student.setId(lastId);
-            student.setHwCount(1 + random.nextInt(5));
-            student.setName(nameStudents.get(i));
+            student.setHomeworkCount(1 + random.nextInt(MAX_COMPLETED_HOMEWORK_COUNT));
+            student.setName(students.get(i));
             studentList.add(student);
         }
     }
@@ -90,6 +91,7 @@ public class StudentsWebService implements IWebService<Student> {
     @Override
     public void removeEntity(final Long id) {
         handler.postDelayed(new Runnable() {
+
             @Override
             public void run() {
                 for (int i = 0; i < studentList.size(); i++) {
@@ -105,6 +107,7 @@ public class StudentsWebService implements IWebService<Student> {
 
     public void addEntity(final int position, final Student student, final ICallback<Long> callback) {
         handler.postDelayed(new Runnable() {
+
             @Override
             public void run() {
                 lastId++;
@@ -121,7 +124,7 @@ public class StudentsWebService implements IWebService<Student> {
             public void run() {
                 for (int i = 0; i < studentList.size(); i++) {
                     if (studentList.get(i).getId().equals(id)) {
-                        studentList.get(i).setHwCount(homeworkCount);
+                        studentList.get(i).setHomeworkCount(homeworkCount);
 
                         break;
                     }
