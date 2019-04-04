@@ -12,10 +12,11 @@ class Num(val value: Int) : Expr()
 class Sum(val left: Expr, val right: Expr) : Expr()
 
 fun eval(e: Expr): Int =
-    when (e) {
-        is Num -> todoTask8(e)
-        is Sum -> todoTask8(e)
-    }
+        when (e) {
+            is Num -> e.value
+            is Sum -> eval(e.left) + eval(e.right)
+            else -> throw IllegalArgumentException("Unknown expression")
+        }
 
 fun todoTask8(expr: Expr): Nothing = TODO(
     """
